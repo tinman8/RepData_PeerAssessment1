@@ -7,7 +7,8 @@ output:
 
 ## Loading and preprocessing the data
 
-```{r, echo=TRUE}
+
+```r
 library(dplyr)
 
 if(!file.exists("activity.csv")) {
@@ -16,12 +17,12 @@ if(!file.exists("activity.csv")) {
 
 data <- read.csv("./activity.csv")
 data <- transform(data, date = as.Date(date, "%Y-%m-%d"))
-
 ```
 
 ## What is mean total number of steps taken per day?
 
-```{r, echo=TRUE}
+
+```r
 data_by_date <- data %>% 
     group_by(date) %>% 
     summarise(
@@ -45,14 +46,30 @@ legend(
     col = c("green", "blue"),
     lwd = 2
 )
+```
 
+![plot of chunk unnamed-chunk-47](figure/unnamed-chunk-47-1.png)
+
+```r
 mean_steps_per_day
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median_steps_per_day
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
 
-```{r, echo=TRUE}
+
+```r
 interval_avg <- data %>% 
     group_by(interval) %>% 
     summarise(step_avg = mean(steps, na.rm = TRUE))
@@ -100,15 +117,30 @@ legend(
     lty = c(0),
     lwd = c(2)
 )
+```
 
+![plot of chunk unnamed-chunk-48](figure/unnamed-chunk-48-1.png)
 
+```r
 interval_with_max_steps
+```
+
+```
+## [1] 835
+```
+
+```r
 max_steps_in_interval
+```
+
+```
+## [1] 206.1698
 ```
 
 ## Imputing missing values
 The missing values are imputed using the average of the specified interval across all dates
-```{r, echo=TRUE}
+
+```r
 missing_values <- which(is.na(data$steps))
 filled_data <- data.frame(data)  # copy the data to new object
 
@@ -143,18 +175,46 @@ legend(
 )
 ```
 
+![plot of chunk unnamed-chunk-49](figure/unnamed-chunk-49-1.png)
+
 ### What is the difference between the filled data, and the orginal data?
 
-```{r, echo=TRUE}
-filled_mean_steps_per_day
-mean_steps_per_day
 
+```r
+filled_mean_steps_per_day
+```
+
+```
+## [1] 10766.19
+```
+
+```r
+mean_steps_per_day
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 filled_median_steps_per_day
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median_steps_per_day
 ```
 
+```
+## [1] 10765
+```
+
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r, echo=TRUE}
+
+```r
 library(lattice)
 
 weekdays <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
@@ -166,7 +226,13 @@ filled_data$weekday <- factor(
 filled_interval_avg <- filled_data %>% 
     group_by(weekday, interval) %>% 
     summarise(mean_steps = mean(steps))
+```
 
+```
+## `summarise()` has grouped output by 'weekday'. You can override using the `.groups` argument.
+```
+
+```r
 xyplot(
     mean_steps ~ interval | weekday, 
     data = filled_interval_avg, 
@@ -176,3 +242,5 @@ xyplot(
     xlab = "Interval"
 )
 ```
+
+![plot of chunk unnamed-chunk-51](figure/unnamed-chunk-51-1.png)
